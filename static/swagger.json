@@ -1,0 +1,230 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "description": "SPOIRIER",
+      "version": "1.0.0",
+      "title": "Miniaturiseur d'image"
+    },
+    "tags": [
+      {
+        "name": "Images Request",
+        "description": "API for uploading images, miniaturize them, and return metadatas or tumbnails"
+      }
+    ],
+    "paths": {
+      "/images": {
+        "get": {
+          "tags": [
+            "Images Request"
+          ],
+          "summary": "Returns all images",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/components/schemas/imageRequests"
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Images Request"
+          ],
+          "summary": "Create a miniature",
+          "requestBody": {
+            "description": "Images Request Post Object",
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "$ref": "#/components/schemas/imageRequestPostBody"
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            },
+            "400": {
+              "description": "Failed. Bad post data."
+            }
+          }
+        }
+      },
+      "/images/{id}": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the image that we want to match",
+            "type": "int"
+          }
+        ],
+        "get": {
+          "tags": [
+            "Images Request"
+          ],
+          "summary": "Get Images request with given ID",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "Images Request id",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/components/schemas/imageRequest"
+              }
+            },
+            "400": {
+              "description": "Failed. Misunderstood Request."
+            },
+            "404": {
+              "description": "Failed. image not found."
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete miniature by ID",
+          "tags": [
+            "Images Request"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "Images Request Id",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            },
+            "400": {
+              "description": "Failed. Misunderstood Request."
+            },
+            "404": {
+              "description": "Failed. Images Request not found."
+            }
+          }
+        }
+      },
+      "/thumnails/{id}.jpg": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of miniature to retrieve",
+            "type": "int"
+          }
+        ],
+        "get": {
+          "tags": [
+            "Images Request"
+          ],
+          "summary": "Get the miniature with ID",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "miniature Request id",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/components/schemas/imageSentBody"
+              }
+            },
+            "400": {
+              "description": "Failed. Misunderstood Request."
+            },
+            "404": {
+              "description": "Failed. miniature not found."
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "id": {
+          "properties": {
+            "uuid": {
+              "type": "int"
+            }
+          }
+        },
+        "imageRequestPostBody": {
+          "type": "object",
+          "properties" : {
+            "mydata": {
+                "type" : "string",
+                "format" : "binary"
+            }
+          }
+        },
+        "imageSentBody": {
+            "type": "string",
+            "format": "binary"
+          },
+        "imageRequest": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "format": "string"
+            },
+            "metadatas": {
+              "type": "metadatas",
+              "format": "string"
+            },
+            "link": {
+              "type": "string",
+              "format": "string"
+            }
+          }
+        },
+        "imageRequests": {
+          "type": "object",
+          "properties": {
+            "imageRequest": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/imageRequest"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
