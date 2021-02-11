@@ -2,6 +2,7 @@ import io
 import json
 import os
 import math
+import magic
 from sys import getsizeof
 from werkzeug.utils import secure_filename
 
@@ -15,7 +16,9 @@ app = Flask(__name__)
 
 
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','doc','docx'])
+dictionnaire_type = dict((('txt','text/plain'),('pdf',''),('png',''),('jpg',''),('jpeg',''),('gif',''),('doc',''),('docx','')))
+
 app.config['UPLOAD_FOLDER'] = 'static/files'
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 
@@ -45,7 +48,7 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
     config={
-        'app_name': "Miniaturiseur d'image"
+        'app_name': "Jsonifyeur de documents"
     }
 )
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
@@ -87,11 +90,18 @@ def soumissionDocument():
         resp.status_code = 400
         return resp
 
+
     if file and allowed_file(file.filename):
+        extension = file.filename.rsplit('.', 1)[1].lower()
+
+
+        
+
         filename = secure_filename(file.filename)
-        print(file.filename)
         print(filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        fullFile = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(fullFile)
+        print(magic.from_file(fullFile, mime=True))
         resp = jsonify({'message' : 'File successfully uploaded'})
         resp.status_code = 201
         return resp
