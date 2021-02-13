@@ -3,6 +3,9 @@ import json
 import os
 import math
 import magic
+import fileManager
+import awsInterface
+
 from sys import getsizeof
 from werkzeug.utils import secure_filename
 
@@ -16,11 +19,12 @@ app = Flask(__name__)
 
 
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','doc','docx'])
-dictionnaire_type = dict((('txt','text/plain'),('pdf',''),('png',''),('jpg',''),('jpeg',''),('gif',''),('doc',''),('docx','')))
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','doc','docx','csv'])
+dictionnaire_type = dict((('txt','text/plain'),('pdf','application/pdf'),('png','image/png'),('jpg','image/jpeg'),('jpeg','image/jpeg'),('gif','image/gif'),('doc','application/msword'),('docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),('csv','text/plain')))
 
 app.config['UPLOAD_FOLDER'] = 'static/files'
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+app.config['AWS_BUCKET_NAME'] = "filrouge-poirier"
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -38,7 +42,7 @@ def convert_size(size_bytes):
 def spec():
     swag = swagger(app)
     swag['info']['version'] = "1.0"
-    swag['info']['title'] = "My API"
+    swag['info']['title'] = "Mon PAI FilRouge"
     return jsonify(swag)
 
 ### swagger specific ###
@@ -92,23 +96,36 @@ def soumissionDocument():
 
 
     if file and allowed_file(file.filename):
-        extension = file.filename.rsplit('.', 1)[1].lower()
-
-
         
-
         filename = secure_filename(file.filename)
-        print(filename)
         fullFile = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(fullFile)
-        print(magic.from_file(fullFile, mime=True))
-        resp = jsonify({'message' : 'File successfully uploaded'})
-        resp.status_code = 201
-        return resp
+
+        extension = file.filename.rsplit('.', 1)[1].lower()
+        mimetype = magic.from_file(fullFile, mime=True)
+
+        if(dictionnaire_type.get(extension) == mimetype):
+
+            content,metas = fileManager.getFileMetasAndContent(file=fullFile,mimetype=mimetype)
+
+            #Upload vers S3
+
+            uploaded = False
+            #with open(fullFile,"rb") as s3File:
+            if(awsInterface.upload_file(fullFile, app.config['AWS_BUCKET_NAME'],filename)):
+                uploaded = True
+
+            resp = jsonify({'message' : 'File successfully analyzed','size' : convert_size(size), 's3-uploaded' : uploaded, 'mimetype' : mimetype, 'SecuredFileName' : filename, 'content' : content, 'metasdatas' : metas})
+            resp.status_code = 201
+            return resp
+        else:
+            resp = jsonify({'message' : 'Incoherence between extension of file and its content, extension: '+extension+", mimetype: "+mimetype})
+            resp.status_code = 400
+            os.remove(fullFile)
+            return resp
     else:
-        resp = jsonify({'message' : 'Allowed file types are txt, pdf, png, jpg, jpeg, gif'})
+        resp = jsonify({'message' : 'Allowed file types are txt, pdf, png, jpg, jpeg, gif, doc, docx, csv'})
         resp.status_code = 400
         return resp
-
 
     return retour
