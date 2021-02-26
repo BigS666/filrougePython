@@ -10,6 +10,7 @@ def upload_file(file_name, bucket, name, object_name=None):
     :param object_name: S3 object name. If not specified then file_name is used
     :return: True if file was uploaded, else False
     """
+    session = boto3.Session(profile_name='csloginstudent')
 
     # If S3 object_name was not specified, use file_name
     if object_name is None:
@@ -17,7 +18,7 @@ def upload_file(file_name, bucket, name, object_name=None):
 
     # Upload the file
     #s3_client = boto3.client('s3')
-    s3 = boto3.resource('s3')
+    s3 = session.resource('s3')
     try:
         #response = s3_client.upload_file(file_name, bucket, object_name)
         s3.meta.client.upload_file(file_name, bucket, name)
