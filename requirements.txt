@@ -1,0 +1,15 @@
+#
+####### requirements.txt #######
+#
+# Specify all required dependances for imageThumbnailing API
+
+flask >= 1.1.2              # Lighweight web application server for python
+Pillow >= 8.0.1             # For image manipulation, thumbnailing
+pytest == 6.1.2             # To run imageThumbnailling tests cases
+
+textract == 1.6.3
+coverage >= 5.3.1              # test coverage
+pytest-cov >= 2.11.1           # test coverage with pytest
+PyYAML == 5.4.1                 # in order to deal with yaml description
+flask-swagger == 0.2.14         # test auto generated swagger file from yaml description methods
+flask-swagger-ui == 3.36.0      # flask swagger ui to explore the image thumbnailing api
