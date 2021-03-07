@@ -4,10 +4,9 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 import base64
 import textract
-import win32com.client
 
 
-dictionnaire_type = dict((('txt','text/plain'),('pdf','application/pdf'),('png','image/png'),('jpg','image/jpeg'),('jpeg','image/jpeg'),('gif','image/gif'),('docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),('pptxx','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),('csv','text/plain')))
+dictionnaire_type = dict((('txt','text/plain'),('pdf','application/pdf'),('png','image/png'),('jpg','image/jpeg'),('jpeg','image/jpeg'),('gif','image/gif'),('docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),('pptx','application/vnd.openxmlformats-officedocument.presentationml.presentation'),('csv','text/plain')))
 
 def getFileMetasAndContent(file,mimetype):
     
@@ -61,7 +60,9 @@ def getFileMetasAndContent(file,mimetype):
         mesMetas["dpi"] = fullDico["info"]["dpi"]
         monContenu = encodeImage(file).decode('utf-8')
     elif(mimetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'):
-        monContenu = textract.process(file)
+        monContenu = textract.process(file).decode('utf-8')
+    elif(mimetype == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'):
+        monContenu = textract.process(file).decode('utf-8')
     return monContenu,mesMetas
 
 def getAllInfo(image):

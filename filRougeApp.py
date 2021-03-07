@@ -19,8 +19,8 @@ app = Flask(__name__)
 
 
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','docx','csv'])
-dictionnaire_type = dict((('txt','text/plain'),('pdf','application/pdf'),('png','image/png'),('jpg','image/jpeg'),('jpeg','image/jpeg'),('gif','image/gif'),('docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),('pptx','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),('csv','text/plain')))
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','docx','csv','pptx'])
+dictionnaire_type = dict((('txt','text/plain'),('pdf','application/pdf'),('png','image/png'),('jpg','image/jpeg'),('jpeg','image/jpeg'),('gif','image/gif'),('docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),('pptx','application/vnd.openxmlformats-officedocument.presentationml.presentation'),('csv','text/plain')))
 
 app.config['UPLOAD_FOLDER'] = 'static/files'
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024

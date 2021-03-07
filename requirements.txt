@@ -7,6 +7,10 @@ flask >= 1.1.2              # Lighweight web application server for python
 Pillow >= 8.0.1             # For image manipulation, thumbnailing
 pytest == 6.1.2             # To run imageThumbnailling tests cases
 
+python-magic == 0.4.18
+python-magic-bin == 0.4.14
+pypdf2 == 1.26.0
+boto3 == 1.16.56            #Aws manager
 textract == 1.6.3
 coverage >= 5.3.1              # test coverage
 pytest-cov >= 2.11.1           # test coverage with pytest

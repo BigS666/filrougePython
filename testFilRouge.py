@@ -13,7 +13,11 @@ contenu, metas = fileManager.getFileMetasAndContent('static/test-files/Capture.P
 
 contenu, metas = fileManager.getFileMetasAndContent('static/test-files/Canon_40D.jpg','image/jpeg')
 
+
+
 contenu, metas = fileManager.getFileMetasAndContent('static/test-files/oiseau.gif','image/gif')
+
+print(metas)
 
 contenu, metas = fileManager.getFileMetasAndContent('static/test-files/weather.csv','text/plain')
 
@@ -21,5 +25,5 @@ contenu, metas = fileManager.getFileMetasAndContent('static/test-files/docxtest.
 
 contenu, metas = fileManager.getFileMetasAndContent('static/test-files/ppttest.pptx','application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 
-print(contenu,metas)
+
 

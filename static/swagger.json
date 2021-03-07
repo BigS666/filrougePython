@@ -1,230 +1,181 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "description": "SPOIRIER",
-      "version": "1.0.0",
-      "title": "Miniaturiseur d'image"
-    },
-    "tags": [
-      {
-        "name": "Images Request",
-        "description": "API for uploading images, miniaturize them, and return metadatas or tumbnails"
-      }
-    ],
-    "paths": {
-      "/images": {
-        "get": {
-          "tags": [
-            "Images Request"
-          ],
-          "summary": "Returns all images",
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "$ref": "#/components/schemas/imageRequests"
-              }
-            }
-          }
-        },
-        "post": {
-          "tags": [
-            "Images Request"
-          ],
-          "summary": "Create a miniature",
-          "requestBody": {
-            "description": "Images Request Post Object",
-            "required": true,
-            "content": {
-              "multipart/form-data": {
-                "schema": {
-                  "$ref": "#/components/schemas/imageRequestPostBody"
-                }
-              }
-            }
-          },
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "$ref": "#/components/schemas/id"
-              }
-            },
-            "400": {
-              "description": "Failed. Bad post data."
-            }
-          }
-        }
-      },
-      "/images/{id}": {
+  "swagger": "2.0",
+  "info": {
+    "description": "#Author: _simon poirier_, **CS Project**, `MS SIO ` [website](https://exed.centralesupelec.fr/formation/mastere-specialise-ingenierie-des-systemes-informatiques-ouverts-2/).\n[github of the project](https://github.com/BigS666/filrougePython.git).\n\n#Description:\n  \n  You can pass one of the following type of files :\n  'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','docx','csv','pptx'.\n  The extension of the file needs to be the real mimetype of the file.\n  The file must be less than 5MB\n  The file is stored on a private S3 Bucket belonging to Simon Poirier : `filrouge-poirier`\n\nCurl sample command in a local instance:\n\n```\ncurl -X POST \"http://127.0.0.1:5000/document\" -H  \"accept: application/json\" -H  \"Content-Type: multipart/form-data\" -F \"mydata=@mondoc.txt;type=text/plain\"\n```\n\nReturn sample:\n\n```json\n{\n  \"SecuredFileName\": \"mondoc.txt\",\n  \"content\": \"Un document texte de test\",\n  \"message\": \"File successfully analyzed\",\n  \"metasdatas\": {\n    \"creation_date\": \"Sat Mar  6 21:08:15 2021\",\n    \"last_modified_date\": \"Sat Mar  6 21:08:15 2021\",\n    \"nomber_of_caraters\": 25,\n    \"nomber_of_lignes\": 1\n  },\n  \"mimetype\": \"text/plain\",\n  \"s3-uploaded\": true,\n  \"size\": \"25.0 B\"\n}\n```\n",
+    "version": "1.0.0",
+    "title": "FilRouge : Upload to S3 and describes a document"
+  },
+  "tags": [
+    {
+      "name": "FilRouge",
+      "description": "API for uploading documents of various types, to a S3 bucket private bucket, and return its metadatas"
+    }
+  ],
+  "paths": {
+    "/document": {
+      "post": {
+        "tags": [
+          "FilRouge"
+        ],
+        "summary": "Upload to S3, returns Metadatas",
+        "operationId": "uploadFile",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID of the image that we want to match",
-            "type": "int"
+            "name": "mydata",
+            "in": "formData",
+            "description": "file to upload",
+            "required": false,
+            "type": "file"
           }
         ],
-        "get": {
-          "tags": [
-            "Images Request"
-          ],
-          "summary": "Get Images request with given ID",
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "required": true,
-              "description": "Images Request id",
-              "schema": {
-                "$ref": "#/components/schemas/id"
-              }
+        "responses": {
+          "201": {
+            "description": "Successful Response : File analyzed",
+            "schema": {
+              "$ref": "#/definitions/success"
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "$ref": "#/components/schemas/imageRequest"
-              }
-            },
-            "400": {
-              "description": "Failed. Misunderstood Request."
-            },
-            "404": {
-              "description": "Failed. image not found."
-            }
-          }
-        },
-        "delete": {
-          "summary": "Delete miniature by ID",
-          "tags": [
-            "Images Request"
-          ],
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "required": true,
-              "description": "Images Request Id",
-              "schema": {
-                "$ref": "#/components/schemas/id"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "$ref": "#/components/schemas/id"
-              }
-            },
-            "400": {
-              "description": "Failed. Misunderstood Request."
-            },
-            "404": {
-              "description": "Failed. Images Request not found."
-            }
-          }
-        }
-      },
-      "/thumnails/{id}.jpg": {
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID of miniature to retrieve",
-            "type": "int"
-          }
-        ],
-        "get": {
-          "tags": [
-            "Images Request"
-          ],
-          "summary": "Get the miniature with ID",
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "required": true,
-              "description": "miniature Request id",
-              "schema": {
-                "$ref": "#/components/schemas/id"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "$ref": "#/components/schemas/imageSentBody"
-              }
-            },
-            "400": {
-              "description": "Failed. Misunderstood Request."
-            },
-            "404": {
-              "description": "Failed. miniature not found."
-            }
-          }
-        }
-      }
-    },
-    "components": {
-      "schemas": {
-        "id": {
-          "properties": {
-            "uuid": {
-              "type": "int"
-            }
-          }
-        },
-        "imageRequestPostBody": {
-          "type": "object",
-          "properties" : {
-            "mydata": {
-                "type" : "string",
-                "format" : "binary"
-            }
-          }
-        },
-        "imageSentBody": {
-            "type": "string",
-            "format": "binary"
           },
-        "imageRequest": {
-          "type": "object",
-          "properties": {
-            "state": {
-              "type": "string",
-              "format": "string"
-            },
-            "metadatas": {
-              "type": "metadatas",
-              "format": "string"
-            },
-            "link": {
-              "type": "string",
-              "format": "string"
-            }
-          }
-        },
-        "imageRequests": {
-          "type": "object",
-          "properties": {
-            "imageRequest": {
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/components/schemas/imageRequest"
-              }
+          "400": {
+            "description": "Failed Upload, see error message.",
+            "schema": {
+              "$ref": "#/definitions/error"
             }
           }
         }
       }
     }
+  },
+  "definitions": {
+    "success": {
+      "type": "object",
+      "required": [
+        "message",
+        "metadatas",
+        "size",
+        "s3-uploaded",
+        "mimetype",
+        "SecuredFileName",
+        "content"
+      ],
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "File successfully analyzed"
+        },
+        "metadatas": {
+          "type": "object",
+          "required": [
+            "last_modified_date",
+            "creation_date"
+          ],
+          "description": "additional metadatas of the file, depending of the file mimetype",
+          "properties": {
+            "last_modified_date": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Last modification date of the file"
+            },
+            "creation_date": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Creation date of the file"
+            },
+            "number_of_pages": {
+              "type": "integer",
+              "format": "int32",
+              "description": "Number of pages"
+            },
+            "number_of_lignes": {
+              "type": "integer",
+              "format": "int32",
+              "description": "Number of lignes"
+            },
+            "author": {
+              "type": "string",
+              "description": "Author of the pdf"
+            },
+            "creator": {
+              "type": "string",
+              "description": "Creator of the pdf"
+            },
+            "producer": {
+              "type": "string",
+              "description": "Producer of the pdf"
+            },
+            "subject": {
+              "type": "string",
+              "description": "Subject of the pdf"
+            },
+            "title": {
+              "type": "string",
+              "description": "Title of the pdf"
+            },
+            "size": {
+              "type": "string",
+              "description": "Dimensions of an image ex: (200,300)"
+            },
+            "mode": {
+              "type": "string",
+              "description": "mode of an image, ex :RGB"
+            },
+            "dpi": {
+              "type": "string",
+              "description": "Points per inche of an image ex: (300,300)"
+            },
+            "duration": {
+              "type": "integer",
+              "format": "int32",
+              "description": "Duration of a gif"
+            }
+          }
+        },
+        "size": {
+          "type": "string",
+          "description": "Size of the file, ex: 3.2MB"
+        },
+        "s3-uploaded": {
+          "type": "boolean",
+          "description": "Is the file is successfully uploaded to the S3 bucket"
+        },
+        "mimetype": {
+          "type": "string",
+          "description": "Mimitype of the analyzed file"
+        },
+        "SecuredFileName": {
+          "type": "string",
+          "description": "Name secured for file system, used for the S3 upload"
+        },
+        "content": {
+          "type": "string",
+          "description": "Stringed content of the file, base64 encoded for binary files"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "description": "Message d'erreur 400 : Bad request message",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "The possible error",
+          "enum": [
+            "Allowed file types are txt, pdf, png, jpg, jpeg, pptx, gif, docx, csv",
+            "Incoherence between extension of file and its content, extension: xxx mimetype: xxx",
+            "File too big, more than 5MB",
+            "No file selected for josonifying",
+            "No file part in the request"
+          ]
+        }
+      }
+    }
   }
+}
