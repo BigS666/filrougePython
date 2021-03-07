@@ -43,21 +43,38 @@ def getFileMetasAndContent(file,mimetype):
     elif(mimetype == 'image/jpeg'):
         fullDico = getAllInfo(file)
         mesMetas["size"] = fullDico["_size"]
-        mesMetas["mode"] = fullDico["mode"]
-        mesMetas["dpi"] = fullDico["info"]["dpi"]
+
+        try:
+            mesMetas["mode"] = fullDico["mode"]
+        except KeyError:
+            print("clef absente : mode")
+        try:
+            mesMetas["dpi"] = fullDico["info"]["dpi"]
+        except KeyError:
+            print("clef absente : dpi")
+
         monContenu = encodeImage(file).decode('utf-8')
 
     elif(mimetype == 'image/gif'):
         fullDico = getAllInfo(file)
         mesMetas["size"] = fullDico["_size"]
-        mesMetas["mode"] = fullDico["mode"]
+        try:
+            mesMetas["mode"] = fullDico["mode"]
+        except KeyError:
+            print("clef absente : mode")
         mesMetas["duration"] = fullDico["info"]["duration"]
         monContenu = encodeImage(file).decode('utf-8')
     elif(mimetype == 'image/png'):
         fullDico = getAllInfo(file)
         mesMetas["size"] = fullDico["_size"]
-        mesMetas["mode"] = fullDico["mode"]
-        mesMetas["dpi"] = fullDico["info"]["dpi"]
+        try:
+            mesMetas["mode"] = fullDico["mode"]
+        except KeyError:
+            print("clef absente : mode")
+        try:
+            mesMetas["dpi"] = fullDico["info"]["dpi"]
+        except KeyError:
+            print("clef absente : dpi")
         monContenu = encodeImage(file).decode('utf-8')
     elif(mimetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'):
         monContenu = textract.process(file).decode('utf-8')

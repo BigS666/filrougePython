@@ -13,11 +13,10 @@ contenu, metas = fileManager.getFileMetasAndContent('static/test-files/Capture.P
 
 contenu, metas = fileManager.getFileMetasAndContent('static/test-files/Canon_40D.jpg','image/jpeg')
 
-
+print(metas)
 
 contenu, metas = fileManager.getFileMetasAndContent('static/test-files/oiseau.gif','image/gif')
 
-print(metas)
 
 contenu, metas = fileManager.getFileMetasAndContent('static/test-files/weather.csv','text/plain')
 
