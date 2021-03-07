@@ -3,7 +3,7 @@
 #
 # Specify all required dependances for imageThumbnailing API
 
-flask >= 1.1.2              # Lighweight web application server for python
+Flask >= 1.1.2              # Lighweight web application server for python
 Pillow >= 8.0.1             # For image manipulation, thumbnailing
 pytest == 6.1.2             # To run imageThumbnailling tests cases
 
