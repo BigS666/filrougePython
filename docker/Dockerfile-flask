@@ -7,7 +7,7 @@ RUN apt-get install unzip -y
 RUN apt-get install wget -y
 RUN apt-get install libmagic1 -y
 RUN apt-get install python3-flask -y
-RUN apt-get install gunicorn3 -y
+RUN apt-get install gunicorn -y
 
 
 RUN mkdir /home/filrouge
@@ -29,4 +29,4 @@ ENV AWS_CONFIG_FILE=/home/aws/config
 
 EXPOSE 8080
 
-CMD ["gunicorn3", "-b", "0.0.0.0:8080", "app:filRougeApp", "--workers=5"]
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:filRougeApp", "--workers=5"]
