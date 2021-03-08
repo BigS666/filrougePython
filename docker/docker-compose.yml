@@ -10,11 +10,17 @@ services:
       - $HOME/.aws:/home/aws:ro
     ports:
       - "8080:8080"
-#  nginx:
-#    image: webapp-nginx
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-nginx
+    network_mode: host
+  nginx:
+    image: webapp-nginx
+    container_name: nginx
+    environment:
+      - SERVER_NAME=0.0.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    restart: always
+    network_mode: host
 #    ports:
 #      - 8080:80
 #    depends_on:

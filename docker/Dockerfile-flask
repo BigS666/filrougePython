@@ -27,6 +27,6 @@ ENV FLASK_RUN_PORT=8080
 ENV AWS_SHARED_CREDENTIALS_FILE=/home/aws/credentials
 ENV AWS_CONFIG_FILE=/home/aws/config
 
-EXPOSE 8080
+#EXPOSE 8080
 
 CMD ["gunicorn", "-b", "0.0.0.0:8080", "filRougeApp:app", "--workers=5"]
