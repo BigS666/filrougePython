@@ -8,12 +8,14 @@ services:
       dockerfile: Dockerfile-flask
     volumes:
       - $HOME/.aws:/home/aws:ro
-  nginx:
-    image: webapp-nginx
-    build:
-      context: .
-      dockerfile: Dockerfile-nginx
     ports:
-      - 8080:80
-    depends_on:
-      - flask
+      - "8080:8080"
+#  nginx:
+#    image: webapp-nginx
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-nginx
+#    ports:
+#      - 8080:80
+#    depends_on:
+#      - flask
