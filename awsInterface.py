@@ -1,6 +1,7 @@
 import logging
 import boto3
 from botocore.exceptions import ClientError
+from botocore.exceptions import ProfileNotFound
 
 def upload_file(file_name, bucket, name, object_name=None):
     """Upload a file to an S3 bucket
@@ -10,7 +11,11 @@ def upload_file(file_name, bucket, name, object_name=None):
     :param object_name: S3 object name. If not specified then file_name is used
     :return: True if file was uploaded, else False
     """
-    session = boto3.Session(profile_name='csloginstudent')
+    try:
+        session = boto3.Session(profile_name='csloginstudent')
+    except ProfileNotFound as pfe:
+        logging.error(pfe)
+        return False
 
     # If S3 object_name was not specified, use file_name
     if object_name is None:
