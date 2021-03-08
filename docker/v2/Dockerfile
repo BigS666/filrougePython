@@ -1,0 +1,30 @@
+FROM ubuntu:20.04
+MAINTAINER cpsiat.spoirier@gmail.com
+
+RUN apt-get update -y
+RUN apt-get install python3-pip -y
+RUN apt-get install unzip -y
+RUN apt-get install wget -y
+RUN apt-get install libmagic1 -y
+RUN apt-get install python3-flask -y
+
+RUN mkdir /home/filrouge
+RUN cd /home/filrouge
+RUN wget https://github.com/BigS666/filrougePython/archive/main.zip \
+	&& unzip main.zip
+
+RUN pip3 install -r filrougePython-main/requirements.txt
+
+
+
+WORKDIR /filrougePython-main
+
+ENV FLASK_APP=filRougeApp.py
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=8080
+ENV AWS_SHARED_CREDENTIALS_FILE=/home/.aws/credentials
+ENV AWS_CONFIG_FILE=/home/aws/config
+
+EXPOSE 8080
+
+CMD ["flask", "run"]

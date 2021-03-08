@@ -1,0 +1,8 @@
+version: "3"
+services:
+  web:
+    image: bigs666/fil-rouge-repository:2.0.0
+    ports:
+      - "8080:8080"
+    volumes:
+      - $HOME/.aws:/home/aws:ro

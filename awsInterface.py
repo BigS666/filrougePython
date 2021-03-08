@@ -15,7 +15,6 @@ def upload_file(file_name, bucket, name, object_name=None):
         session = boto3.Session(profile_name='csloginstudent')
     except ProfileNotFound as pfe:
         logging.error(pfe)
-        return False
 
     # If S3 object_name was not specified, use file_name
     if object_name is None:
