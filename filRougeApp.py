@@ -114,6 +114,10 @@ def soumissionDocument():
             #with open(fullFile,"rb") as s3File:
             if(awsInterface.upload_file(fullFile, app.config['AWS_BUCKET_NAME'],filename)):
                 uploaded = True
+                if(mimetype=='image/jpeg' or mimetype=='image/png'):
+                    labels = awsInterface.detect_labels(app.config['AWS_BUCKET_NAME'],filename)
+                    if(labels != False):
+                        metas["rekognition_labels"] = labels
 
             resp = jsonify({'message' : 'File successfully analyzed','size' : convert_size(size), 's3-uploaded' : uploaded, 'mimetype' : mimetype, 'SecuredFileName' : filename, 'content' : content, 'metasdatas' : metas})
             resp.status_code = 201

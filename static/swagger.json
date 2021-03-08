@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "#Author: _simon poirier_, **CS Project**, `MS SIO ` [website](https://exed.centralesupelec.fr/formation/mastere-specialise-ingenierie-des-systemes-informatiques-ouverts-2/).\n[github of the project](https://github.com/BigS666/filrougePython.git).\n\n#Description:\n  \n  You can pass one of the following type of files :\n  'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','docx','csv','pptx'.\n  The extension of the file needs to be the real mimetype of the file.\n  The file must be less than 5MB\n  The file is stored on a private S3 Bucket belonging to Simon Poirier : `filrouge-poirier`\n\nCurl sample command in a local instance:\n\n```\ncurl -X POST \"http://127.0.0.1:5000/document\" -H  \"accept: application/json\" -H  \"Content-Type: multipart/form-data\" -F \"mydata=@mondoc.txt;type=text/plain\"\n```\n\nReturn sample:\n\n```json\n{\n  \"SecuredFileName\": \"mondoc.txt\",\n  \"content\": \"Un document texte de test\",\n  \"message\": \"File successfully analyzed\",\n  \"metasdatas\": {\n    \"creation_date\": \"Sat Mar  6 21:08:15 2021\",\n    \"last_modified_date\": \"Sat Mar  6 21:08:15 2021\",\n    \"nomber_of_caraters\": 25,\n    \"nomber_of_lignes\": 1\n  },\n  \"mimetype\": \"text/plain\",\n  \"s3-uploaded\": true,\n  \"size\": \"25.0 B\"\n}\n```\n",
+    "description": "#Author: _simon poirier_, **CS Project**, `MS SIO ` [website](https://exed.centralesupelec.fr/formation/mastere-specialise-ingenierie-des-systemes-informatiques-ouverts-2/).\n The docker hub repository : [dockerhub](https://hub.docker.com/repository/docker/bigs666/fil-rouge-repository)\n[github of the project](https://github.com/BigS666/filrougePython.git).\n\n#Description:\n  \n  You can pass one of the following type of files :\n  'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','docx','csv','pptx'.\n  The extension of the file needs to be the real mimetype of the file.\n  The file must be less than 5MB\n  The file is stored on a private S3 Bucket belonging to Simon Poirier : `filrouge-poirier`\n If the S3 upload is a success and the file is a jpeg or a png file, it will be analyzed by `Amazon Reckognition`\n\nCurl sample command in a local instance:\n\n```\ncurl POST \"http://{host}:{port}/document\"  -F \"mydata=@mondoc.txt\"\n  ```\n Host can be `filrougev2.spo.p2021.ajoga.fr` or `filrougev1.spo.p2021.ajoga.fr` or anoher version\n port could be `80,8080 or 443`. \n\nReturn sample:\n\n```json\n{\n  \"SecuredFileName\": \"mondoc.txt\",\n  \"content\": \"Un document texte de test\",\n  \"message\": \"File successfully analyzed\",\n  \"metasdatas\": {\n    \"creation_date\": \"Sat Mar  6 21:08:15 2021\",\n    \"last_modified_date\": \"Sat Mar  6 21:08:15 2021\",\n    \"nomber_of_caraters\": 25,\n    \"nomber_of_lignes\": 1\n  },\n  \"mimetype\": \"text/plain\",\n  \"s3-uploaded\": true,\n  \"size\": \"25.0 B\"\n}\n```\n",
     "version": "1.0.0",
     "title": "FilRouge : Upload to S3 and describes a document"
   },
@@ -66,7 +66,8 @@
       "properties": {
         "message": {
           "type": "string",
-          "description": "File successfully analyzed"
+          "description": "status",
+          "example":"File successfully analyzed"
         },
         "metadatas": {
           "type": "object",
@@ -89,55 +90,89 @@
             "number_of_pages": {
               "type": "integer",
               "format": "int32",
-              "description": "Number of pages"
+              "description": "Number of pages",
+              "example" : 5
             },
             "number_of_lignes": {
               "type": "integer",
               "format": "int32",
-              "description": "Number of lignes"
+              "description": "Number of lignes",
+              "example" : 12
             },
             "author": {
               "type": "string",
-              "description": "Author of the pdf"
+              "description": "Author of the pdf",
+              "example" : "Auteur"
             },
             "creator": {
               "type": "string",
-              "description": "Creator of the pdf"
+              "description": "Creator of the pdf",
+              "example" : "Le createur"
             },
             "producer": {
               "type": "string",
-              "description": "Producer of the pdf"
+              "description": "Producer of the pdf",
+              "example" : "The producer"
             },
             "subject": {
               "type": "string",
-              "description": "Subject of the pdf"
+              "description": "Subject of the pdf",
+              "example" : "Mon sujet"
             },
             "title": {
               "type": "string",
-              "description": "Title of the pdf"
+              "description": "Title of the pdf",
+              "example" : "Titre"
             },
             "size": {
               "type": "string",
-              "description": "Dimensions of an image ex: (200,300)"
+              "description": "Dimensions of an image ex: (200,300)",
+              "example" : "(800,600)"
             },
             "mode": {
               "type": "string",
-              "description": "mode of an image, ex :RGB"
+              "description": "mode of an image, ex :RGB",
+              "example" : "RGB"
             },
             "dpi": {
               "type": "string",
-              "description": "Points per inche of an image ex: (300,300)"
+              "description": "Points per inche of an image ex: (300,300)",
+              "example" : "(300,300)"
             },
             "duration": {
               "type": "integer",
               "format": "int32",
-              "description": "Duration of a gif"
+              "description": "Duration of a gif",
+              "example" : 2
+            },
+            "rekognition_labels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "example": {
+                  "Confidence": 99.84239959716797,
+                  "Instances": [],
+                  "Name": "Metropolis",
+                  "Parents": [
+                    {
+                      "Name": "City"
+                    },
+                    {
+                      "Name": "Urban"
+                    },
+                    {
+                      "Name": "Building"
+                    }
+                  ]
+              }
+              }
             }
           }
         },
         "size": {
           "type": "string",
-          "description": "Size of the file, ex: 3.2MB"
+          "description": "Size of the file, ex: 3.2MB",
+          "example" : "3.2MB"
         },
         "s3-uploaded": {
           "type": "boolean",
@@ -145,15 +180,18 @@
         },
         "mimetype": {
           "type": "string",
-          "description": "Mimitype of the analyzed file"
+          "description": "Mimitype of the analyzed file",
+          "example" : "image/jpeg"
         },
         "SecuredFileName": {
           "type": "string",
-          "description": "Name secured for file system, used for the S3 upload"
+          "description": "Name secured for file system, used for the S3 upload",
+          "example" : "monimage.jpg"
         },
         "content": {
           "type": "string",
-          "description": "Stringed content of the file, base64 encoded for binary files"
+          "description": "Stringed content of the file, base64 encoded for binary files",
+          "example" : "le contenu de mon fichier"
         }
       }
     },
@@ -167,13 +205,7 @@
         "message": {
           "type": "string",
           "description": "The possible error",
-          "enum": [
-            "Allowed file types are txt, pdf, png, jpg, jpeg, pptx, gif, docx, csv",
-            "Incoherence between extension of file and its content, extension: xxx mimetype: xxx",
-            "File too big, more than 5MB",
-            "No file selected for josonifying",
-            "No file part in the request"
-          ]
+          "example": "Allowed file types are txt, pdf, png, jpg, jpeg, pptx, gif, docx, csv"
         }
       }
     }
