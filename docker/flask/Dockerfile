@@ -22,9 +22,9 @@ WORKDIR /filrougePython-main
 ENV FLASK_APP=filRougeApp.py
 ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=8080
-ENV AWS_SHARED_CREDENTIALS_FILE=/home/.aws/credentials
+ENV AWS_SHARED_CREDENTIALS_FILE=/home/aws/credentials
 ENV AWS_CONFIG_FILE=/home/aws/config
 
 EXPOSE 8080
 
-CMD ["flask", "run"]
+CMD ["uwsgi", "--ini", "filRougeApp.ini"]

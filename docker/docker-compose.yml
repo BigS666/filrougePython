@@ -1,0 +1,18 @@
+# docker-compose.yml
+version: '3'
+services:
+  flask:
+    image: webapp-flask
+    build:
+      dockerfile: ./flask/Dockerfile
+    volumes:
+      - $HOME/.aws:/home/aws:ro
+  nginx:
+    image: webapp-nginx
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    depends_on:
+      - flask
