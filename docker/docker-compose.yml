@@ -4,14 +4,15 @@ services:
   flask:
     image: webapp-flask
     build:
-      dockerfile: ./flask/Dockerfile
+      context: .
+      dockerfile: Dockerfile-flask
     volumes:
       - $HOME/.aws:/home/aws:ro
   nginx:
     image: webapp-nginx
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-nginx
     ports:
       - 8080:80
     depends_on:
