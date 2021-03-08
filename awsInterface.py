@@ -14,7 +14,7 @@ def upload_file(file_name, bucket, name, object_name=None):
     """
     # If S3 object_name was not specified, use file_name
     if object_name is None:
-        object_name = file_name
+        object_name = name
 
     try:
 
@@ -31,7 +31,7 @@ def upload_file(file_name, bucket, name, object_name=None):
         logging.error(pfe)
         s3 = boto3.client('s3')
         try:
-            s3.upload_file(file_name, bucket, object_name)
+            s3.upload_file(file_name, bucket, name)
         except ClientError as e:
             logging.error(e)
             return False
