@@ -3,25 +3,50 @@ version: '3'
 services:
   flask:
     image: webapp-flask
+    container_name: flaskapp
+    networks:
+      - filrougenet
     build:
       context: .
       dockerfile: Dockerfile-flask
     volumes:
       - $HOME/.aws:/home/aws:ro
-    ports:
-      - "8080:8080"
-    network_mode: host
+    #ports:
+    #  - "8080:8080"
+    #network_mode: host
+  flask-1:
+    image: webapp-flask-1
+    container_name: flaskapp-1
+    networks:
+      - filrougenet
+    build:
+      context: .
+      dockerfile: Dockerfile-flask-1
+    volumes:
+      - $HOME/.aws:/home/aws:ro
+    #ports:
+    #  - "8080:8080"
+    #network_mode: host
   nginx:
     image: webapp-nginx
     container_name: nginx
+    networks:
+      - filrougenet
+    ports:
+      - "80:80"
     environment:
       - SERVER_NAME=0.0.0.0
     build:
       context: .
       dockerfile: Dockerfile-nginx
     restart: always
-    network_mode: host
+    #network_mode: host
 #    ports:
 #      - 8080:80
 #    depends_on:
 #      - flask
+networks:
+  #default:
+  #  driver: bridge
+  filrougenet:
+    driver: bridge
