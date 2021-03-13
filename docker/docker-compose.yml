@@ -3,7 +3,8 @@ version: '3'
 services:
   flask:
     image: webapp-flask
-    container_name: flaskapp
+    #No container name for scale command
+    #container_name: flaskapp
     networks:
       - filrougenet
     build:
@@ -14,39 +15,42 @@ services:
     #ports:
     #  - "8080:8080"
     #network_mode: host
-  flask-1:
-    image: webapp-flask-1
-    container_name: flaskapp-1
-    networks:
-      - filrougenet
-    build:
-      context: .
-      dockerfile: Dockerfile-flask-1
-    volumes:
-      - $HOME/.aws:/home/aws:ro
+#  flask-1:
+#    image: webapp-flask-1
+#    container_name: flaskapp-1
+#    networks:
+#      - filrougenet
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-flask-1
+#    volumes:
+#      - $HOME/.aws:/home/aws:ro
     #ports:
     #  - "8080:8080"
     #network_mode: host
   nginx:
     image: webapp-nginx
     container_name: nginx
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     networks:
       - filrougenet
     ports:
       - "80:80"
+      - "443:443"
     environment:
       - SERVER_NAME=0.0.0.0
     build:
       context: .
       dockerfile: Dockerfile-nginx
     restart: always
+    depends_on:
+      - flask
     #network_mode: host
 #    ports:
-#      - 8080:80
-#    depends_on:
-#      - flask
-networks:
-  #default:
-  #  driver: bridge
-  filrougenet:
-    driver: bridge
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
