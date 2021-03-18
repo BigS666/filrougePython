@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose-windows-amd64.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: nginx
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose-windows-amd64.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/filrougenet: "true"
+        io.kompose.service: nginx
+    spec:
+      containers:
+      - args:
+        - /bin/sh
+        - -c
+        - while :; do sleep 6h & wait ${!}; nginx -s reload; done & nginx -g "daemon
+          off;"
+        env:
+        - name: SERVER_NAME
+          value: 0.0.0.0
+        image: bigs666/nginx-filrouge:3.0.0
+        imagePullPolicy: ""
+        name: nginx
+        volumeMounts:
+          - name: letencrypt
+            mountPath: /etc/letsencrypt
+          - name: certbot
+            mountPath: /var/www/certbot
+          - name: nginx
+            mountPath: /etc/nginx/conf.d
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: 
+        - name: letencrypt
+          hostPath:
+            path: ../docker/data/certbot/conf
+            type: Directory
+        - name: certbot
+          hostPath:
+            path: ../docker/data/certbot/www
+            type: Directory
+        - name: nginx
+          hostPath:
+            path: ../docker/nginx
+            type: Directory
+status: {}

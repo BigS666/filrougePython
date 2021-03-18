@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose-windows-amd64.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: flask
+  name: flask
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      io.kompose.service: flask
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose-windows-amd64.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/filrougenet: "true"
+        io.kompose.service: flask
+    spec:
+      containers:
+      - image: bigs666/flask-filrouge:3.0.0
+        imagePullPolicy: ""
+        name: flask
+        resources: {}
+        volumeMounts:
+        - mountPath: /home/aws
+          name: flask-claim0
+          readOnly: true
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: flask-claim0
+        hostPath:
+          path: /$HOME/.aws
+          type: Directory
+status: {}
