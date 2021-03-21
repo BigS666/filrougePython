@@ -67,7 +67,7 @@ def soumissionDocument():
     >{"type":docx}
     """
     retour = ""
-
+    
     # testing existance of 'mydata' as attached file to upload
     if "mydata" not in request.files:
         resp = jsonify({'message' : 'No file part in the request'})

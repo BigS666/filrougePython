@@ -1,28 +1,31 @@
 import os
-import fileManager
+import requests
 
-# Fichier pour tester l'API à distance
+#Méthode pour renouveller le token OAuth2 auprès de WSO2
+def renewToken():
+    url = 'https://filrougewso2.spo.p2021.ajoga.fr:8243/token'
+    headers = {'Authorization': 'Basic V3FCU25OX01seUFmV21DNnBOSGQ1UmdsQVhzYTpYcmRwNU1talFfMkhWM0FiRkZpQTFXMV9zZWth'}
+    r = requests.post(url, data={'grant_type':'password','username':'filrougeuser','password':'filrougeuser'}, headers=headers, verify=False)
+    return r
 
-#curl -F mydata=@mondoc.type http://127.0.0.1:5000/document
+#Méthode pour uploader via WSO2 avec un token valide
+def test_uploadImage_wso2(token):
+    url = 'https://filrougewso2.spo.p2021.ajoga.fr:8243/filrouge/1.0.0/document'
+    headers = {'Authorization':'Bearer '+token}
+    fichierToUpload = {'mydata' : open('./static/test-files/Capture.PNG','rb')}
+    r = requests.post(url, headers=headers, verify=False, files=fichierToUpload)
+    return r
 
-contenu, metas = fileManager.getFileMetasAndContent('static/test-files/sample.pdf','application/pdf')
+#Méthode pour uploader un fichier en accédant directement à l'application
+def test_uploadImage_without_wso2():
+    url = 'https://filrougev3.spo.p2021.ajoga.fr/document'
+    fichierToUpload = {'mydata' : open('./static/test-files/Capture.PNG','rb')}
+    r = requests.post(url, files=fichierToUpload)
+    return r
 
-contenu, metas = fileManager.getFileMetasAndContent('static/test-files/fichiertest.txt','text/plain')
+response = test_uploadImage_without_wso2()
+print(response.json()['message'])
 
-contenu, metas = fileManager.getFileMetasAndContent('static/test-files/Capture.PNG','image/png')
-
-contenu, metas = fileManager.getFileMetasAndContent('static/test-files/Canon_40D.jpg','image/jpeg')
-
-print(metas)
-
-contenu, metas = fileManager.getFileMetasAndContent('static/test-files/oiseau.gif','image/gif')
-
-
-contenu, metas = fileManager.getFileMetasAndContent('static/test-files/weather.csv','text/plain')
-
-contenu, metas = fileManager.getFileMetasAndContent('static/test-files/docxtest.docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-
-contenu, metas = fileManager.getFileMetasAndContent('static/test-files/ppttest.pptx','application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-
-
-
+token = renewToken().json()['access_token']
+reponse_2 = test_uploadImage_wso2(token)
+print(reponse_2.json()['message'])
